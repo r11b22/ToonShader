@@ -4,14 +4,43 @@
 
 #include "ToonScene.h"
 
+#include "FileReader.h"
+#include "MainRenderPass.h"
+#include "OutlineRenderPass.h"
 #include "Defaults/Camera/FirstPersonCamera.h"
 #include "Defaults/Objects/Drawables/MeshObject.h"
+#include "Renderer/Renderer.h"
 
 ToonScene::ToonScene() {
 
 }
 
 void ToonScene::onLoad(Renderer &renderer, Window &window) {
+    renderer.setClearBits(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // setup shader
+    std::unique_ptr<ShaderProgram> toonShader = std::make_unique<ShaderProgram>();
+
+    toonShader->addShader(FileReader::readFile("Shaders/ToonShader/vertex.glsl").c_str(), GL_VERTEX_SHADER);
+    toonShader->addShader(FileReader::readFile("Shaders/ToonShader/fragment.glsl").c_str(), GL_FRAGMENT_SHADER);
+
+    toonShader->link();
+
+    renderer.addShaderProgram("toonShader", std::move(toonShader));
+
+
+    std::unique_ptr<ShaderProgram> outlineShader = std::make_unique<ShaderProgram>();
+    outlineShader->addShader(FileReader::readFile("Shaders/OutlineShader/vertex.glsl").c_str(), GL_VERTEX_SHADER);
+    outlineShader->addShader(FileReader::readFile("Shaders/OutlineShader/fragment.glsl").c_str(), GL_FRAGMENT_SHADER);
+    outlineShader->link();
+    renderer.addShaderProgram("outlineShader", std::move(outlineShader));
+
+
+    std::unique_ptr<OutlineRenderPass> mOutlinePass = std::make_unique<OutlineRenderPass>();
+    renderer.addRenderPass(std::move(mOutlinePass));
+
+    std::unique_ptr<MainRenderPass> mainRenderPass = std::make_unique<MainRenderPass>();
+    renderer.setRenderPass(0, std::move(mainRenderPass));
 
     inputManager = new InputManager(window);
 
@@ -23,6 +52,7 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
     tigerLoader.readFile("Models/Animals/tiger/tiger.gltf");
     tigerLoader.loadTexture("Models/Animals/tiger/Texture_1.png");
     std::shared_ptr<Mesh> tigerMesh = tigerLoader.createMesh();
+    tigerMesh->setShader("toonShader");
     mTiger = std::make_shared<MeshObject>("tiger", tigerMesh);
     addObject(mTiger);
 

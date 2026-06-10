@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(ToonShader VERSION 1.0.0 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -24,6 +23,10 @@ add_executable(${PROJECT_NAME}
     main.cpp
         src/ToonScene.cpp
         include/ToonScene.h
+        src/OutlineRenderPass.cpp
+        include/OutlineRenderPass.h
+        include/MainRenderPass.h
+        src/MainRenderPass.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
