@@ -11,7 +11,7 @@ class ToonScene : public Scene {
 private:
     InputManager* inputManager = nullptr;
 
-    std::shared_ptr<MeshObject> mTiger = nullptr;
+    std::vector<std::shared_ptr<MeshObject>> mTigers = {};
 
 public:
     ToonScene();

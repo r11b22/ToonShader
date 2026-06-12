@@ -15,7 +15,7 @@ void MainRenderPass::setupState() {
 
     glStencilMask(0xFF);
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_INCR, GL_REPLACE);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 }
 
 void MainRenderPass::resetState() {

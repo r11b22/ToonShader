@@ -18,7 +18,7 @@ std::optional<std::string> OutlineRenderPass::getCustomShaderName() {
 }
 
 void OutlineRenderPass::drawObject(std::shared_ptr<IDrawable> drawable, ShaderProgram &currentProgram) {
-    currentProgram.setUniformFloat("uOutlineThickness", 0.05f);
+    currentProgram.setUniformFloat("uOutlineThickness", 0.01f);
 
     drawable->draw(currentProgram);
 }
@@ -28,7 +28,7 @@ void OutlineRenderPass::setupState() {
     // we just tweak their behavior:
     glCullFace(GL_FRONT);      // Draw ONLY back-faces for the outline
     glDepthMask(GL_FALSE);     // Outlines don't write to depth
-    glDepthFunc(GL_LESS);    // Outlines can sit on the exact same depth plane
+    glDepthFunc(GL_LEQUAL);    // Outlines can sit on the exact same depth plane
 
     glStencilMask(0x00);       // Lock stencil (Read-only)
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // Only draw where stencil is exactly 1

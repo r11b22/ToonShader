@@ -12,16 +12,14 @@ uniform float uOutlineThickness;
 
 void main()
 {
-    // 1. Calculate the normal in world space (or model space)
-    // We use the normal matrix to keep it accurate if the model is scaled
-    vec3 worldNormal = normalize(mat3(transpose(inverse(uModelMatrix))) * aNorm);
+    vec4 clipPos = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aPos, 1.0);
 
-    // 2. Calculate the base world position of the vertex
-    vec3 worldPos = vec3(uModelMatrix * vec4(aPos, 1.0));
+    // Get normal into view space
+    mat3 normalMatrix = mat3(transpose(inverse(uViewMatrix * uModelMatrix)));
+    vec3 viewNormal = normalize(normalMatrix * aNorm);
 
-    // 3. Extrude the position outward along the normal
-    vec3 extrudedPos = worldPos + (worldNormal * uOutlineThickness);
+    // Only offset in screen XY, ignore Z — avoids inward extrusion
+    clipPos.xy += viewNormal.xy * uOutlineThickness * clipPos.w;
 
-    // 4. Pass the extruded position to clip space
-    gl_Position = uProjectionMatrix * uViewMatrix * vec4(extrudedPos, 1.0);
+    gl_Position = clipPos;
 }
