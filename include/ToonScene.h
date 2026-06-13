@@ -4,6 +4,7 @@
 
 #ifndef TOONSHADER_TOONSCENE_H
 #define TOONSHADER_TOONSCENE_H
+#include "ToonObject.h"
 #include "Defaults/Objects/Drawables/MeshObject.h"
 #include "Scene/Scene.h"
 
@@ -11,7 +12,7 @@ class ToonScene : public Scene {
 private:
     InputManager* inputManager = nullptr;
 
-    std::vector<std::shared_ptr<MeshObject>> mTigers = {};
+    std::vector<std::shared_ptr<ToonObject>> mTigers = {};
 
 public:
     ToonScene();

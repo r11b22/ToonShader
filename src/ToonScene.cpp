@@ -5,8 +5,7 @@
 #include "ToonScene.h"
 
 #include "FileReader.h"
-#include "MainRenderPass.h"
-#include "OutlineRenderPass.h"
+#include "ToonObject.h"
 #include "Defaults/Camera/FirstPersonCamera.h"
 #include "Defaults/Objects/Drawables/MeshObject.h"
 #include "Renderer/Renderer.h"
@@ -36,13 +35,6 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
     outlineShader->link();
     renderer.addShaderProgram("outlineShader", std::move(outlineShader));
 
-
-    std::unique_ptr<OutlineRenderPass> mOutlinePass = std::make_unique<OutlineRenderPass>();
-    renderer.addRenderPass(std::move(mOutlinePass));
-
-    std::unique_ptr<MainRenderPass> mainRenderPass = std::make_unique<MainRenderPass>();
-    renderer.setRenderPass(0, std::move(mainRenderPass));
-
     inputManager = new InputManager(window);
 
     std::shared_ptr<FirstPersonCamera> camera = std::make_shared<FirstPersonCamera>("main camera", *inputManager, window);
@@ -53,12 +45,13 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
     tigerLoader.readFile("Models/Animals/tiger/tiger.gltf");
     tigerLoader.loadTexture("Models/Animals/tiger/Texture_1.png");
     std::shared_ptr<Mesh> tigerMesh = tigerLoader.createMesh();
-    tigerMesh->setShader("toonShader");
+    std::shared_ptr<Material> tigerMaterial = tigerLoader.createMaterial();
 
     for (int i = 0; i < 5; i++) {
-        auto tiger = std::make_shared<MeshObject>("tiger", tigerMesh);
+        auto tiger = std::make_shared<ToonObject>("tiger", tigerMesh, tigerMaterial);
         addObject(tiger);
         tiger->setPosition(glm::vec3{getRandomFloat(-5.0f, 5.0f), getRandomFloat(-5.0f, 5.0f), getRandomFloat(-5.0f, 5.0f)});
+        tiger->setShader("toonShader");
         mTigers.push_back(tiger);
 
 

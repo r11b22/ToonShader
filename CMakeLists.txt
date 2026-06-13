@@ -23,10 +23,8 @@ add_executable(${PROJECT_NAME}
     main.cpp
         src/ToonScene.cpp
         include/ToonScene.h
-        src/OutlineRenderPass.cpp
-        include/OutlineRenderPass.h
-        include/MainRenderPass.h
-        src/MainRenderPass.cpp
+        include/ToonObject.h
+        src/ToonObject.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
