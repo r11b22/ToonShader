@@ -7,9 +7,9 @@
 #include "FileReader.h"
 #include "ToonObject.h"
 #include "Defaults/Camera/FirstPersonCamera.h"
-#include "Defaults/Objects/Drawables/MeshObject.h"
 #include "Renderer/Renderer.h"
 #include "Utilities/Random.h"
+
 
 ToonScene::ToonScene() {
 

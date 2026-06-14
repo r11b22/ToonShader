@@ -5,7 +5,6 @@
 #ifndef TOONSHADER_TOONSCENE_H
 #define TOONSHADER_TOONSCENE_H
 #include "ToonObject.h"
-#include "Defaults/Objects/Drawables/MeshObject.h"
 #include "Scene/Scene.h"
 
 class ToonScene : public Scene {
@@ -17,6 +16,7 @@ private:
 public:
     ToonScene();
     ~ToonScene();
+
 
     void onLoad(Renderer &renderer, Window &window) override;
     void onUpdate(Renderer &renderer, Window &window, float deltaT) override;
