@@ -1,14 +1,14 @@
 #version 330 core
-layout (location = 0) out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
 
 #define MAX_POINT_LIGHTS 5
 
-struct Light{
+struct Light {
     vec3 position;
     vec3 diffuse;
     vec3 specular;
 
-// uitdoving
+    // uitdoving
     float constant;
     float lineair;
     float quadratic;
@@ -31,15 +31,15 @@ void main()
 {
     vec4 texColor = texture(uTexture, UV);
 
-    if (texColor.a < 0.5){
+    if (texColor.a < 0.5) {
         discard;
     }
 
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(uCameraPos - FragPos);
-    vec3 totalLight = uAmbient*vec3(texColor);
+    vec3 totalLight = uAmbient * vec3(texColor);
 
-    for (int i = 0; i < numPointLights; i++){
+    for (int i = 0; i < numPointLights; i++) {
         Light light = uPointLights[i];
 
         vec3 lightDirection = normalize(light.position - FragPos);
@@ -47,14 +47,10 @@ void main()
 
         float diff = max(dot(norm, lightDirection), 0.0);
 
-        vec3 reflectDir = reflect(-lightDirection, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-
         float attenuation = 1.0 / (light.constant + light.lineair * distance + light.quadratic * (distance * distance));
         vec3 diffuse = light.diffuse * diff * vec3(texColor);
-        vec3 specular = light.specular * spec * uSpecularStrength;
 
-        totalLight += ((diffuse + specular) * attenuation);
+        totalLight += ((diffuse) * attenuation);
     }
 
     vec4 outColor = vec4(totalLight, texColor.a);

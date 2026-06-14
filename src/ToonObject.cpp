@@ -4,6 +4,7 @@
 
 #include "ToonObject.h"
 #include "Renderer/RenderCommand.h"
+#include <iostream>
 #include <vector>
 
 ToonObject::ToonObject(const std::string &name, const std::shared_ptr<Mesh> &mesh, const std::shared_ptr<Material> &material)
@@ -49,7 +50,7 @@ std::vector<RenderCommand> ToonObject::getRenderCommands() {
     outlineState.state.cullFace    = true;
     outlineState.state.cullMode    = CullMode::Front; // Draw back faces (the inverted hull)
     outlineState.state.depthTest   = true;
-    outlineState.state.depthWrite  = false;           // Outlines shouldn't write to the depth buffer
+    outlineState.state.depthWrite  = true;
 
     // Stencil Configuration
     outlineState.state.stencilTest      = true;
@@ -74,5 +75,6 @@ std::vector<RenderCommand> ToonObject::getRenderCommands() {
     defaultCommands.insert(defaultCommands.begin() + 1, clearCmd); // clear while writing is enabled
     defaultCommands.push_back(outlineState);
     defaultCommands.push_back(outlineCommand);
+
     return defaultCommands;
 }

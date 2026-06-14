@@ -16,6 +16,8 @@ ToonScene::ToonScene() {
 }
 
 void ToonScene::onLoad(Renderer &renderer, Window &window) {
+    window.setVSYNC(false);
+
     renderer.setClearBits(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // setup shader
