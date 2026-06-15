@@ -5,10 +5,18 @@
 #include "ToonScene.h"
 
 #include "FileReader.h"
+#include "Lighting/DirectionalLightData.h"
+#include "Material/Material.h"
+#include "ModelLoader.h"
 #include "ToonObject.h"
 #include "Defaults/Camera/FirstPersonCamera.h"
 #include "Renderer/Renderer.h"
 #include "Utilities/Random.h"
+
+#include "Defaults/Objects/Lighting/AmbientLight.h"
+#include "Defaults/Objects/Lighting/DirectionalLight.h"
+#include "glm/trigonometric.hpp"
+#include <memory>
 
 
 ToonScene::ToonScene() {
@@ -49,11 +57,10 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
     std::shared_ptr<Mesh> tigerMesh = tigerLoader.createMesh();
     std::shared_ptr<Material> tigerMaterial = tigerLoader.createMaterial();
 
-    for (int i = 0; i < 5; i++) {
+   /*for (int i = 0; i < 5; i++) {
         auto tiger = std::make_shared<ToonObject>("tiger", tigerMesh, tigerMaterial);
         addObject(tiger);
         tiger->setPosition(glm::vec3{getRandomFloat(-5.0f, 5.0f), getRandomFloat(-5.0f, 5.0f), getRandomFloat(-5.0f, 5.0f)});
-        tiger->setShader("toonShader");
         mTigers.push_back(tiger);
 
 
@@ -61,11 +68,34 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
             glm::vec3 diff = tiger->getPosition() - camera->getPosition();
             camera->lookAt(glm::normalize(diff));
         }
-    }
+        }*/
+
+    auto tiger = std::make_shared<ToonObject>("tiger", tigerMesh, tigerMaterial, 0.1f);
+    addObject(tiger);
+    tiger->setPosition({3.5f, 1.1f, 6.0f});
+    tiger->rotate(glm::radians(10.0f), {1.0f, 0.0f, 0.0f});
+    tiger->rotate(glm::radians(-10.0f), {0.0f, 0.0f, 1.0f});
+    glm::vec3 diff = tiger->getPosition() - camera->getPosition();
+    camera->lookAt(glm::normalize(diff));
+
+    ModelLoader terrainLoader = {};
+    terrainLoader.readFile("Models/Terrain/terrain.gltf");
+    terrainLoader.loadTexture("Models/Terrain/Colour_Palette_baseColor.png");
+
+    std::shared_ptr<Mesh> terrainMesh = terrainLoader.createMesh();
+    std::shared_ptr<Material> terrainMaterial = terrainLoader.createMaterial();
+
+    auto terrain = std::make_shared<ToonObject>("terrain", terrainMesh, terrainMaterial, 0.5f);
+    addObject(terrain);
 
 
-    std::shared_ptr<AmbientLight> ambientLight = std::make_shared<AmbientLight>("ambient light", glm::vec3{0.5f, 0.5f, 0.5f});
+    std::shared_ptr<AmbientLight> ambientLight = std::make_shared<AmbientLight>("ambient light", glm::vec3{0.1f});
     addObject(ambientLight);
+
+    std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>("Directional light", glm::vec3{0.5f, 0.5f, 0.2f}, glm::vec3{1.0f});
+    addObject(directionalLight);
+
+    renderer.setClearColor({0.05f, 0.1f, 0.3f, 1.0f});
 }
 
 void ToonScene::onUpdate(Renderer &renderer, Window &window, float deltaT) {

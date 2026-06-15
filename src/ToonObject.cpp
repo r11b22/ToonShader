@@ -7,14 +7,14 @@
 #include <iostream>
 #include <vector>
 
-ToonObject::ToonObject(const std::string &name, const std::shared_ptr<Mesh> &mesh, const std::shared_ptr<Material> &material)
-    : TransformableObject(name), MeshObject(name, mesh, material)
+ToonObject::ToonObject(const std::string &name, const std::shared_ptr<Mesh> &mesh, const std::shared_ptr<Material> &material, float outlineWidth)
+    : TransformableObject(name), MeshObject(name, mesh, material), mOutlineWidth(outlineWidth)
 {
 
 }
 
 std::vector<RenderCommand> ToonObject::getRenderCommands() {
-    std::vector<RenderCommand> defaultCommands = MeshObject::getRenderCommands();
+    std::vector<RenderCommand> commands = {};
 
     ClearCommand clearCmd;
     clearCmd.clearColor   = false;
@@ -42,6 +42,12 @@ std::vector<RenderCommand> ToonObject::getRenderCommands() {
     baseState.state.stencilZPassOp   = StencilOp::Replace;
 
 
+    DrawCommand drawCommand;
+    drawCommand.renderable = getMesh();
+    drawCommand.material = getMaterial();
+    drawCommand.shaderName = "toonShader";
+    drawCommand.uniforms.push_back({"uModelMatrix", getTransformationMatrix()});
+    drawCommand.uniforms.push_back({"uSteps", 5});
 
 
 
@@ -69,12 +75,14 @@ std::vector<RenderCommand> ToonObject::getRenderCommands() {
     outlineCommand.material = getMaterial();
     outlineCommand.shaderName = "outlineShader";
     outlineCommand.uniforms.push_back({"uModelMatrix", getTransformationMatrix()});
-    outlineCommand.uniforms.push_back({"uOutlineThickness", 0.005f});
+    outlineCommand.uniforms.push_back({"uOutlineThickness", mOutlineWidth});
 
-    defaultCommands[0] = baseState;
-    defaultCommands.insert(defaultCommands.begin() + 1, clearCmd); // clear while writing is enabled
-    defaultCommands.push_back(outlineState);
-    defaultCommands.push_back(outlineCommand);
 
-    return defaultCommands;
+    commands.push_back(baseState);
+    commands.push_back(clearCmd); // clear while writing is enabled
+    commands.push_back(drawCommand);
+    commands.push_back(outlineState);
+    commands.push_back(outlineCommand);
+
+    return commands;
 }
