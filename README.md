@@ -19,3 +19,25 @@ The program uses cel shading to achieve a cartoon look. The steps of the cell sh
 
 ### Outlineing
 To elevate the cel shader we use create a black outline around each seperate object. These outlines are rendered via the inverted hull method.
+
+
+## Building and Running
+This project uses cmake to build. The project was only tested on Linux. No other operating systems are gauranteed to work but may function just fine.
+
+**Build**
+```bash
+mkdir build
+cd build
+
+cmake ..
+
+cmake --build . --config Release
+```
+
+**Run**
+In this version of Spelt does not yet have a way to handle resources. You need to run the compiled binary with the root of the project as the working directory.
+
+from the root of the project run:
+```bash
+./build/ToonShader
+```

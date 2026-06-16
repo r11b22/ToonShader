@@ -56,7 +56,8 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
     tigerLoader.loadTexture("Models/Animals/tiger/Texture_1.png");
     std::shared_ptr<Mesh> tigerMesh = tigerLoader.createMesh();
     std::shared_ptr<Material> tigerMaterial = tigerLoader.createMaterial();
-
+    tigerMaterial->setShininess(64.0f);
+    tigerMaterial->setSpecular(0.5f);
    /*for (int i = 0; i < 5; i++) {
         auto tiger = std::make_shared<ToonObject>("tiger", tigerMesh, tigerMaterial);
         addObject(tiger);
@@ -84,6 +85,9 @@ void ToonScene::onLoad(Renderer &renderer, Window &window) {
 
     std::shared_ptr<Mesh> terrainMesh = terrainLoader.createMesh();
     std::shared_ptr<Material> terrainMaterial = terrainLoader.createMaterial();
+
+    terrainMaterial->setShininess(256.0f);
+    terrainMaterial->setSpecular(0.2f);
 
     auto terrain = std::make_shared<ToonObject>("terrain", terrainMesh, terrainMaterial, 0.5f);
     addObject(terrain);

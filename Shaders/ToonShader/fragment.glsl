@@ -29,6 +29,14 @@ uniform int uNumDirectionalLights;
 
 uniform vec3 uAmbient;
 
+struct MaterialProperties {
+    float diffuse;
+    float specular;
+    float shininess;
+};
+
+uniform MaterialProperties uMaterialProperties;
+
 uniform sampler2D uTexture;
 uniform float uSpecularStrength;
 
@@ -59,10 +67,14 @@ void main()
 
         float diff = max(dot(norm, lightDirection), 0.0);
 
-        float attenuation = 1.0 / (light.constant + light.lineair * distance + light.quadratic * (distance * distance));
-        vec3 diffuse = light.diffuse * diff * vec3(texColor);
+        vec3 reflectDir = reflect(-lightDirection, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterialProperties.shininess);
 
-        totalLight += ((diffuse) * attenuation);
+        float attenuation = 1.0 / (light.constant + light.lineair * distance + light.quadratic * (distance * distance));
+        vec3 diffuse = uMaterialProperties.diffuse * light.diffuse * diff * vec3(texColor);
+        vec3 specular = uMaterialProperties.specular * light.specular * spec;
+
+        totalLight += ((diffuse + specular) * attenuation);
     }
 
     for (int i = 0; i < uNumDirectionalLights; i++) {
@@ -72,9 +84,13 @@ void main()
 
         float diff = max(dot(norm, lightDirection), 0.0);
 
-        vec3 diffuse = light.diffuse * diff * vec3(texColor);
+        vec3 reflectDir = reflect(-lightDirection, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterialProperties.shininess);
 
-        totalLight += (diffuse);
+        vec3 diffuse = uMaterialProperties.diffuse * light.diffuse * diff * vec3(texColor);
+        vec3 specular = uMaterialProperties.specular * light.specular * spec;
+
+        totalLight += (diffuse + specular);
     }
 
     vec3 roundedLightColor = round(totalLight * uSteps) / uSteps;
